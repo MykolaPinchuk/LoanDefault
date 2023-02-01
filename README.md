@@ -6,6 +6,9 @@ This project is deployable via GCP App Engine. Free GCP trial is sufficient to d
 Steps to build and deploy the model on GCP:
 1. Clone this repo.
 2. Cd into loans-app.
-3. ```gcloud init
-gcloud app deploy```
+3. 
+```
+gcloud init
+gcloud app deploy
+```
 4. follow the link, shown in the console after the previous command to verify that webapp works.
