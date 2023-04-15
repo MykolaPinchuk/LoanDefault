@@ -15,26 +15,23 @@ def predict():
         dti = request.form.get('dti')
         acc24 = request.form.get('acc24')
         lti = request.form.get('lti')
-        subgrade = request.form.get('subgrade')
-        employment = request.form.get('employment')
-        home_ownership = request.form.get('home_ownership')
+        # subgrade = request.form.get('subgrade')
+        # employment = request.form.get('employment')
+        # home_ownership = request.form.get('home_ownership')
         #call preprocessDataAndPredict and pass inputs
         try:
             prediction = preprocessDataAndPredict(term, 
                                                   dti, 
                                                   acc24, 
-                                                  lti, 
-                                                  subgrade, 
-                                                  employment, 
-                                                  home_ownership)
+                                                  lti)
             #pass prediction to template
             return render_template('predict.html', prediction = prediction)
         except ValueError:
             return "Please Enter valid values"
         pass        
     pass
-def preprocessDataAndPredict(term, dti, acc24, lti, subgrade, employment, home_ownership):
-    test_data = [term, dti, acc24, lti, subgrade, employment, home_ownership]
+def preprocessDataAndPredict(term, dti, acc24, lti):
+    test_data = [term, dti, acc24, lti]
     print(test_data)
     test_data = np.array(test_data).astype(np.float) 
     test_data = test_data.reshape(1,-1)
