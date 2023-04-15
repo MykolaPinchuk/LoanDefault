@@ -9,7 +9,7 @@ from flask import request
 from flask import url_for
 # from googleapiclient import discovery
 # from oauth2client.client import GoogleCredentials
-from xgboost import XGBRegressor
+from xgboost import XGBClassifier
 
 
 # credentials = GoogleCredentials.get_application_default()
@@ -24,7 +24,7 @@ app = Flask(__name__)
 
 def get_prediction(features):
 
-    trained_model = XGBRegressor()
+    trained_model = XGBClassifier()
     trained_model.load_model("xgb_model.json")
     feature_df = pd.DataFrame.from_dict(features,orient='index').T
     prediction = trained_model.predict(feature_df)
@@ -42,7 +42,7 @@ def predict():
 
     data = json.loads(request.data.decode())
     mandatory_items = ['term', 'dti',
-                     'lti', 'acc_open_past_24mths']
+                     'lti', 'num_open']
     for item in mandatory_items:
         if item not in data.keys():
             return jsonify({'result': 'Set all items.'})
@@ -54,4 +54,10 @@ def predict():
     features['acc_open_past_24mths'] = int(data['num_open'])
 
     prediction = get_prediction(features)
-    return jsonify({'result': '{:.2f} lbs.'.format(prediction)})
+    if prediction==0:
+        output = 'No deafult'
+    elif prediction==1:
+        output = 'Default'
+    else:
+        output = 'Wrong output'
+    return jsonify({'result': output})

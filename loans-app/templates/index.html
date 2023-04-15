@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Baby Weight Predictor</title>
+  <title>Loan default prediction</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
@@ -11,7 +11,7 @@
 <body ng-app="myApp" ng-cloak style="background-color: #efefef" ng-controller="myCtrl" layout="column">
   <md-toolbar>
     <div class="md-toolbar-tools">
-      <span>Baby weight predictor</span>
+      <span>Loan default predictor</span>
     </div>
   </md-toolbar>
   <md-content flex style="width:420">
@@ -26,7 +26,7 @@
           <span>Loan term</span>
           <md-slider-container>
               {: data.term :}&nbsp;
-            <md-slider aria-label="Slider" min="15" max="49"
+            <md-slider aria-label="Slider" min="24" max="60"
                        ng-model="data.term" id="age-slider">
             </md-slider>
           </md-slider-container>
@@ -45,7 +45,7 @@
         <div layout="row" layout-align="space-between center">
           <span>LTI</span>
           <md-slider-container>
-              {: data.dti :}&nbsp;
+              {: data.lti :}&nbsp;
             <md-slider aria-label="Slider" min="0" max="150"
                        ng-model="data.lti" id="age-slider">
             </md-slider>
