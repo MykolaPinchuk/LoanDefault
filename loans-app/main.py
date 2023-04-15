@@ -1,45 +1,57 @@
-#import Flask 
-import numpy as np
-import joblib, sklearn
-from flask import Flask, render_template, request
-from xgboost import XGBClassifier
-#create an instance of Flask
+import json
+import os
+import pandas as pd
+
+from flask import Flask
+from flask import jsonify
+from flask import render_template
+from flask import request
+from flask import url_for
+# from googleapiclient import discovery
+# from oauth2client.client import GoogleCredentials
+from xgboost import XGBRegressor
+
+
+# credentials = GoogleCredentials.get_application_default()
+# api = discovery.build('ml', 'v1',
+#         credentials=credentials, cache_discovery=False)
+# project = os.environ['GOOGLE_CLOUD_PROJECT']
+# model_name = os.getenv('MODEL_NAME', 'babyweight')
+
+
 app = Flask(__name__)
+
+
+def get_prediction(features):
+
+    trained_model = XGBRegressor()
+    trained_model.load_model("xgb_model.json")
+    feature_df = pd.DataFrame.from_dict(features,orient='index').T
+    prediction = trained_model.predict(feature_df)
+    
+    return prediction[0]
+
+
 @app.route('/')
-def home():
-    return render_template('home.html')
-@app.route('/predict/', methods=['GET','POST'])
+def index():
+    return render_template('index.html')
+
+
+@app.route('/api/predict', methods=['POST'])
 def predict():
-    if request.method == "POST":
-        term = request.form.get('term')
-        dti = request.form.get('dti')
-        acc24 = request.form.get('acc24')
-        lti = request.form.get('lti')
-        # subgrade = request.form.get('subgrade')
-        # employment = request.form.get('employment')
-        # home_ownership = request.form.get('home_ownership')
-        #call preprocessDataAndPredict and pass inputs
-        try:
-            prediction = preprocessDataAndPredict(term, 
-                                                  dti, 
-                                                  acc24, 
-                                                  lti)
-            #pass prediction to template
-            return render_template('predict.html', prediction = prediction)
-        except ValueError:
-            return "Please Enter valid values"
-        pass        
-    pass
-def preprocessDataAndPredict(term, dti, acc24, lti):
-    test_data = [term, dti, acc24, lti]
-    print(test_data)
-    test_data = np.array(test_data).astype(np.float) 
-    test_data = test_data.reshape(1,-1)
-    print(test_data)   
-    trained_model = XGBClassifier()
-    trained_model.load_model('xgb_model.bst')
-    prediction = trained_model.predict(test_data)
-    return prediction
-    pass
-if __name__ == '__main__':
-    app.run(debug=True)
+
+    data = json.loads(request.data.decode())
+    mandatory_items = ['term', 'dti',
+                     'lti', 'acc_open_past_24mths']
+    for item in mandatory_items:
+        if item not in data.keys():
+            return jsonify({'result': 'Set all items.'})
+
+    features = {}
+    features['term'] = int(data['term'])
+    features['dti'] = float(data['dti'])
+    features['lti'] = float(data['lti'])
+    features['acc_open_past_24mths'] = int(data['num_open'])
+
+    prediction = get_prediction(features)
+    return jsonify({'result': '{:.2f} lbs.'.format(prediction)})
