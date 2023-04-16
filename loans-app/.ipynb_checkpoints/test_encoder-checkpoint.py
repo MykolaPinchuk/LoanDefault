@@ -1,7 +1,7 @@
 import json
 import os
 import pandas as pd
-import joblib
+import pickle
 
 from flask import Flask
 from flask import jsonify
@@ -54,58 +54,17 @@ class CrossFoldEncoder:
         X_encoded.columns = [name + "_encoded" for name in X_encoded.columns]
         return X_encoded
 
+    
+with open('TEncoder.pickle', 'rb') as handle:
+    tencoder = pickle.load(handle)
 
-app = Flask(__name__)
+te_features = ['C1', 'OWN', 1]
+# te_features = [data['subgrade'], data['home_ownership'], 1]
+te_features = pd.DataFrame(te_features).T
+te_features.columns = ['sub_grade', 'home_ownership', 'target']
+encoded_features = tencoder.transform(te_features)
 
-
-def get_prediction(features):
-
-    trained_model = XGBClassifier()
-    trained_model.load_model("xgb_model6f.json")
-    feature_df = pd.DataFrame.from_dict(features,orient='index').T
-    prediction = trained_model.predict(feature_df)
-
-    return prediction[0]
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/api/predict', methods=['POST'])
-def predict():
-
-    data = json.loads(request.data.decode())
-    mandatory_items = ['term', 'dti',
-                     'lti', 'num_open']
-    for item in mandatory_items:
-        if item not in data.keys():
-            return jsonify({'result': 'Set all items.'})
-
-    features = {}
-    features['term'] = int(data['term'])
-    features['dti'] = float(data['dti'])
-    features['lti'] = float(data['lti'])
-    features['acc_open_past_24mths'] = int(data['num_open'])
-
-    with open('TEncoder.pkl', 'rb') as handle:
-        tencoder = joblib.load(handle)
-
-    te_features = ['C1', 'OWN', 1]
-    # te_features = [data['subgrade'], data['home_ownership'], 1]
-    te_features = pd.DataFrame(te_features).T
-    te_features.columns = ['sub_grade', 'home_ownership', 'target']
-    encoded_features = tencoder.transform(te_features)
-
-    features['sub_grade_encoded'] = encoded_features.sub_grade_encoded
-    features['home_ownership_encoded'] = encoded_features.home_ownership_encoded
-
-
-    prediction = get_prediction(features)
-    if prediction==0:
-        output = 'No deafult'
-    elif prediction==1:
-        output = 'Default'
-    else:
-        output = 'Wrong output'
-    return jsonify({'result': output})
+print(encoded_features.sub_grade_encoded)
+print(pd.__version__)
+# print(pickle.__version__)
+!pip freeze
