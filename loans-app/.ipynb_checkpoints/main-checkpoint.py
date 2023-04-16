@@ -54,8 +54,10 @@ def predict():
     
     print(f'opened pickle successfully')
     
-    te_features = ['D1', 'RENT', 1]
-    # te_features = [data['subgrade'], data['home_ownership'], 1]
+    # te_features = ['D1', 'RENT', 1]
+    te_features = [data['subgrade'], data['home_ownership'], 1]
+    print(f'input subgrade and homeownership: {te_features}')
+    
     te_features = pd.DataFrame(te_features).T
     te_features.columns = ['sub_grade', 'home_ownership', 'target']
     encoded_features = tencoder.transform(te_features)

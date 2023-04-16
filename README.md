@@ -15,3 +15,10 @@ gcloud init
 gcloud app deploy
 ```
 4. Follow the link, shown in the console after the previous command to verify that webapp works.
+
+
+
+
+Notes:
+- To use target encoder at prediction time, I can use this object directly. To make it work, see this: https://stackoverflow.com/questions/57888291/how-to-properly-pickle-sklearn-pipeline-when-using-custom-transformer.
+
