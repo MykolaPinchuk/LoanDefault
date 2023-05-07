@@ -1,7 +1,9 @@
 # LoanDefault
 This repo containts an ML project to predict defaults of Lending Club loans. It is deployable via a simple Flask webapp on Google Cloud Platform (GCP). 
 An XGBoost model here is a simplified version of my model from [Kaggle](https://www.kaggle.com/code/pmykola/lending-club-loan-default-prediction/edit/run/109869105). It is built in 'loans_modeling_' notebooks.
-This project is deployable via GCP App Engine. Free GCP trial subscription is sufficient to deploy the model.
+This project is deployable via GCP App Engine. Free GCP trial subscription is sufficient to deploy the model: https://medium.com/@pinchukmykola/ml-model-to-predict-loan-defaults-part-4-deployment-and-serving-on-gcp-374a7401999f/
+
+I published a series of Medium artciles, walking through modeling and deployment of this project: 
 
 <br>
 <br>
